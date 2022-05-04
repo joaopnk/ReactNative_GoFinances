@@ -1,6 +1,10 @@
 import React from 'react';
 import AppLoading from 'expo-app-loading';
 
+import { StatusBar } from 'react-native';
+
+import 'intl';
+import 'intl/locale-data/jsonp/pt-BR';
 
        {/* ThemeProvider: trabalha como um contexto */}
 import { ThemeProvider  } from 'styled-components';
@@ -17,7 +21,9 @@ import {
 import theme from './src/global/styles/theme';
 
 // #Barra de nav
-import { NavigationContainer } from '@react-navigation/native'
+import { Routes } from './src/routes';
+
+
 import { AppRoutes } from './src/routes/app.routes';
 
 
@@ -25,7 +31,13 @@ import { AppRoutes } from './src/routes/app.routes';
 import { Register } from './src/screens/Register';
 // import { CategorySelect } from './src/screens/CategorySelect';
 
+import { SignIn} from './src/screens/SignIn';
+
+import { AuthProvider, useAuth } from './src/hooks/auth';
+
+
 export default function App() {
+
   
   // Recebendo a fonte para que o cell do usuario tenha.
   const [fontsLoaded] = useFonts({
@@ -34,17 +46,21 @@ export default function App() {
     Poppins_700Bold
   });
 
+  const { userStorageLoading } = useAuth();
+
   // Se a fontes não carregarem, segurnaod usuario na tela de splash
-  if(!fontsLoaded){
+  if(!fontsLoaded || userStorageLoading){
     return <AppLoading />
   }
 
   return (
     <>
       <ThemeProvider theme={theme}>
-        <NavigationContainer>
-          <AppRoutes />
-        </NavigationContainer>
+          <StatusBar barStyle="light-content" />
+          {/* <AppRoutes /> */}
+          <AuthProvider>
+            <Routes />
+          </AuthProvider >
       </ThemeProvider>
     </>
   )
